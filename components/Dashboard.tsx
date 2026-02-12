@@ -156,7 +156,7 @@ const healthScore = Math.min(100, Math.max(0, stats.savingsRate));
     color="purple"
     progress={stats.savingsRate}
   />
-
+ 
 </section>
 
 
