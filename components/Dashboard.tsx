@@ -13,32 +13,12 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions }) => {
   const [aiInsight, setAiInsight] = useState<string>("กำลังประมวลผลคำแนะนำจาก AI...");
 
   const stats = useMemo(() => {
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
-
-  const currentTransactions = transactions.filter((t) => {
-    const date = new Date(t.date);
-    return (
-      date.getMonth() === currentMonth &&
-      date.getFullYear() === currentYear
-    );
-  });
-
-  const income = currentTransactions
-    .filter(t => t.type === 'income')
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  const expenses = currentTransactions
-    .filter(t => t.type === 'expense')
-    .reduce((acc, t) => acc + t.amount, 0);
-
-  const net = income - expenses;
-  const savingsRate = income > 0 ? Math.round((net / income) * 100) : 0;
-
-  return { income, expenses, net, savingsRate };
-}, [transactions]);
-
+    const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+    const expenses = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+    const net = income - expenses;
+    const savingsRate = income > 0 ? Math.round((net / income) * 100) : 0;
+    return { income, expenses, net, savingsRate };
+  }, [transactions]);
 
   const expenseBreakdown = useMemo(() => {
     const groups: Record<string, number> = {};

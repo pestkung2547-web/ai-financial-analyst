@@ -43,11 +43,12 @@ const DataEntry: React.FC<DataEntryProps> = ({ onAdd }) => {
   };
 
   return (
+    <div className="min-h-screen bg-black">
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">บันทึกข้อมูลการเงิน</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm font-normal">กรอกข้อมูลรายรับ รายจ่าย และการลงทุนเพื่อการวิเคราะห์ที่แม่นยำ</p>
+          <h1 className="text-3xl font-semibold text-white">บันทึกข้อมูลการเงิน</h1>
+          <p className="text-neutral-400 text-sm font-normal">กรอกข้อมูลรายรับ รายจ่าย และการลงทุนเพื่อการวิเคราะห์ที่แม่นยำ</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 xl:gap-8 items-start">
@@ -94,13 +95,14 @@ const DataEntry: React.FC<DataEntryProps> = ({ onAdd }) => {
         <div className="sticky bottom-4 z-40 mt-4 flex justify-center w-full">
           <button 
             onClick={() => handleSubmit(formData.type)}
-            className="shadow-xl shadow-primary/20 bg-primary hover:bg-[#15c515] text-[#0e1b0e] rounded-full h-16 min-w-[320px] px-8 text-lg font-bold flex items-center justify-center gap-3 transition-all transform hover:scale-105 active:scale-95"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg h-12 min-w-[280px] px-8 text-base font-bold flex items-center justify-center gap-3 transition-all"
           >
             <span className="material-symbols-outlined">save</span>
             บันทึกทั้งหมด
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 };
@@ -119,29 +121,35 @@ interface EntryBoxProps {
 
 const EntryBox: React.FC<EntryBoxProps> = ({ title, subTitle, icon, color, btnText, categories, formData, setFormData, onSave }) => {
   const colorStyles: any = {
-    green: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 border-primary/40',
-    red: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 border-red-200',
-    blue: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200'
+    green: 'text-emerald-500',
+    red: 'text-red-500',
+    blue: 'text-blue-500'
+  };
+
+  const buttonStyles: any = {
+    green: 'border-emerald-500 text-emerald-500 hover:bg-emerald-500/10',
+    red: 'border-red-500 text-red-500 hover:bg-red-500/10',
+    blue: 'border-blue-500 text-blue-500 hover:bg-blue-500/10'
   };
 
   return (
-    <div className="group bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 flex flex-col gap-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 pb-4">
-        <div className={`p-2 rounded-lg ${colorStyles[color].split(' ').slice(0, 2).join(' ')}`}>
+    <div className="group bg-neutral-900 rounded-lg border border-neutral-800 p-6 flex flex-col gap-6 transition-all">
+      <div className="flex items-center gap-3 border-b border-neutral-800 pb-4">
+        <div className={`p-2 rounded-lg text-neutral-700 ${colorStyles[color]}`}>
           <span className="material-symbols-outlined">{icon}</span>
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-          {title} <span className="text-sm font-medium text-gray-400 dark:text-gray-500 ml-1">{subTitle}</span>
+        <h3 className="text-xl font-semibold text-white">
+          {title} <span className="text-sm font-medium text-neutral-500 ml-1">{subTitle}</span>
         </h3>
       </div>
       
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">จำนวนเงิน (Amount)</label>
+          <label className="block text-sm font-medium text-neutral-300">จำนวนเงิน (Amount)</label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">฿</span>
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 font-medium">฿</span>
             <input 
-              className="block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white pl-8 focus:border-primary focus:ring-primary h-12" 
+              className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 text-white pl-8 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 h-10 placeholder-neutral-600" 
               placeholder="0.00" 
               type="number"
               value={formData.amount}
@@ -150,29 +158,29 @@ const EntryBox: React.FC<EntryBoxProps> = ({ title, subTitle, icon, color, btnTe
           </div>
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">หมวดหมู่ (Category)</label>
+          <label className="block text-sm font-medium text-neutral-300">หมวดหมู่ (Category)</label>
           <select 
-            className="block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white h-12"
+            className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 text-white h-10 px-3 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
           >
-            <option value="" disabled>เลือกหมวดหมู่</option>
-            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            <option value="" disabled className="bg-neutral-900">เลือกหมวดหมู่</option>
+            {categories.map(c => <option key={c} value={c} className="bg-neutral-900">{c}</option>)}
           </select>
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">วันที่ (Date)</label>
+          <label className="block text-sm font-medium text-neutral-300">วันที่ (Date)</label>
           <input 
-            className="block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white h-12 px-4" 
+            className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 text-white h-10 px-3 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" 
             type="date"
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
           />
         </div>
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">บันทึกช่วยจำ (Note)</label>
+          <label className="block text-sm font-medium text-neutral-300">บันทึกช่วยจำ (Note)</label>
           <textarea 
-            className="block w-full rounded-xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white p-3 resize-none h-24" 
+            className="block w-full rounded-lg border border-neutral-700 bg-neutral-800 text-white p-3 resize-none h-20 placeholder-neutral-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500" 
             placeholder="รายละเอียดเพิ่มเติม..."
             value={formData.note}
             onChange={(e) => setFormData({ ...formData, note: e.target.value })}
@@ -182,9 +190,9 @@ const EntryBox: React.FC<EntryBoxProps> = ({ title, subTitle, icon, color, btnTe
       
       <button 
         onClick={onSave}
-        className={`mt-auto flex items-center justify-center w-full py-3 px-4 rounded-xl border border-dashed text-sm font-semibold hover:opacity-80 transition-opacity gap-2 ${colorStyles[color]}`}
+        className={`mt-auto flex items-center justify-center w-full py-2.5 px-4 rounded-lg border border-dashed text-sm font-semibold transition-all gap-2 ${buttonStyles[color]}`}
       >
-        <span className="material-symbols-outlined text-[20px]">add_circle</span>
+        <span className="material-symbols-outlined text-[18px]">add_circle</span>
         {btnText}
       </button>
     </div>
