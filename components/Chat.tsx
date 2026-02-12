@@ -1,7 +1,7 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { chatWithAI } from '../services/geminiService';
 import { ChatMessage } from '../types';
+import { useLocation } from 'react-router-dom';
 
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -10,6 +10,8 @@ const Chat: React.FC = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
+  const initialProcessed = useRef(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -17,20 +19,33 @@ const Chat: React.FC = () => {
     }
   }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const sendPrompt = async (prompt: string) => {
+    if (!prompt.trim() || isLoading) return;
 
-    const userMessage: ChatMessage = { role: 'user', text: input, timestamp: new Date() };
+    const userMessage: ChatMessage = { role: 'user', text: prompt, timestamp: new Date() };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
     const history = [...messages, userMessage].map(m => ({ role: m.role, parts: [{ text: m.text }] }));
-    const response = await chatWithAI(input, history);
+    const response = await chatWithAI(prompt, history);
 
     setMessages(prev => [...prev, { role: 'model', text: response || 'No response', timestamp: new Date() }]);
     setIsLoading(false);
   };
+
+  const handleSend = () => sendPrompt(input);
+
+  useEffect(() => {
+    try {
+      const state: any = (location && (location as any).state) || {};
+      const prompt = state?.initialPrompt as string | undefined;
+      if (prompt && !initialProcessed.current) {
+        initialProcessed.current = true;
+        sendPrompt(prompt);
+      }
+    } catch (e) {}
+  }, [location]);
 
   return (
     <div className="flex-1 flex flex-col relative w-full max-w-5xl mx-auto h-[calc(100vh-80px)] overflow-hidden bg-white dark:bg-black">

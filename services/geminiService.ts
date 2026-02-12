@@ -1,7 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import type { ChatHistoryTurn } from "../types";
+console.log("API KEY:", import.meta.env.VITE_GEMINI_API_KEY);
 
-const apiKey = process.env.GEMINI_API_KEY ?? process.env.API_KEY ?? "";
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
 function getClient() {
   if (!apiKey || apiKey === "PLACEHOLDER_API_KEY") {
@@ -24,7 +25,7 @@ export const getFinancialInsight = async (summary: string): Promise<string> => {
   try {
     const ai = getClient();
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: `Based on this financial summary: "${summary}", provide a single, short, actionable advice for a student in Thai language. Start with "AI Insight: ".`,
       config: {
         temperature: 0.7,

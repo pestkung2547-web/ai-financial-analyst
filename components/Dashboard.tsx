@@ -4,13 +4,28 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Transaction } from '../types';
 import { CHART_COLORS } from '../constants';
 import { getFinancialInsight } from '../services/geminiService';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardProps {
   transactions: Transaction[];
+  onClearTransactions?: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ transactions }) => {
+const Dashboard: React.FC<DashboardProps> = ({ transactions, onClearTransactions }) => {
   const [aiInsight, setAiInsight] = useState<string>("กำลังประมวลผลคำแนะนำจาก AI...");
+  const navigate = useNavigate();
+
+  const handleClear = () => {
+    if (!confirm('คุณต้องการลบข้อมูลการทำธุรกรรมทั้งหมดหรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้')) return;
+    if (typeof onClearTransactions === 'function') {
+      onClearTransactions();
+    } else {
+      try {
+        localStorage.removeItem('transactions');
+        window.location.reload();
+      } catch (e) {}
+    }
+  };
 
   const stats = useMemo(() => {
     const income = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
@@ -120,6 +135,11 @@ const healthScore = Math.min(100, Math.max(0, stats.savingsRate));
   return (
     <div className="w-full min-h-screen bg-white dark:bg-black">
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-8 flex flex-col gap-6 lg:gap-8">
+        <div className="flex justify-end">
+          <button onClick={handleClear} className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+            เคลียร์ข้อมูล
+          </button>
+        </div>
         {/* Stats Cards */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
@@ -250,7 +270,12 @@ const healthScore = Math.min(100, Math.max(0, stats.savingsRate));
               </div>
             </div>
           </div>
-          <button className="z-10 group flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 dark:bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 dark:hover:bg-emerald-700 transition-all w-full md:w-auto">
+          <button onClick={() => {
+              if (!confirm('ต้องการส่งสรุปการเงินและคำแนะนำไปที่ AI Chat เพื่อวิเคราะห์หรือไม่?')) return;
+              const summary = `สรุปการเงิน: รายรับ ฿${stats.income.toLocaleString()}, รายจ่าย ฿${stats.expenses.toLocaleString()}, คงเหลือ ฿${stats.net.toLocaleString()}, สัดส่วนออม ${stats.savingsRate}%. คำแนะนำ AI: ${aiInsight}`;
+              navigate('/chat', { state: { initialPrompt: summary } });
+            }}
+            className="z-10 group flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-600 dark:bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 dark:hover:bg-emerald-700 transition-all w-full md:w-auto">
             View Analysis
             <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </button>

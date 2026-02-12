@@ -6,13 +6,29 @@ import DataEntry from './components/DataEntry';
 import Chat from './components/Chat';
 import Login from './components/Login';
 import Header from './components/Header';
+import Reports from './components/Reports.tsx';
 import { Transaction, Theme } from './types';
 import { INITIAL_TRANSACTIONS } from './constants';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [theme, setTheme] = useState<Theme>(Theme.LIGHT);
-  const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    try {
+      const raw = localStorage.getItem('transactions');
+      return raw ? (JSON.parse(raw) as Transaction[]) : INITIAL_TRANSACTIONS;
+    } catch (e) {
+      return INITIAL_TRANSACTIONS;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+    } catch (e) {
+      // ignore storage errors
+    }
+  }, [transactions]);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme;
@@ -46,7 +62,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Dashboard transactions={transactions} />} />
             <Route path="/entry" element={<DataEntry onAdd={addTransaction} />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/reports" element={<div className="p-10 text-center text-gray-900 dark:text-white">Reports Page - Coming Soon</div>} />
+            <Route path="/reports" element={<Reports transactions={transactions} />} />
           </Routes>
         </main>
       </div>
